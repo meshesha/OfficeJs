@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>OfficeJs - Meshesha</title>
+    <!--All-->
+    <script src="./jQuery/jquery-1.12.4.min.js"></script>
+    <!--PDF-->
+    <script src="./pdf/pdf.js"></script>
+    <!--Docs-->
+    <script src="./docxjs/jszip-utils.js"></script>
+    <script src="./docxjs/mammoth.browser.min.js"></script>
+    <!--PPTX-->
+    <link rel="stylesheet" href="./pptxjs/pptxjs.css">
+    <link rel="stylesheet" href="./pptxjs/nv.d3.min.css">
+    <script type="text/javascript" src="./pptxjs/jszip.min.js"></script>
+    <script type="text/javascript" src="./pptxjs/filereader.js"></script>
+    <script type="text/javascript" src="./pptxjs/d3.min.js"></script>
+    <script type="text/javascript" src="./pptxjs/nv.d3.min.js"></script>
+    <script type="text/javascript" src="./pptxjs/pptxjs.js"></script>
+    <script type="text/javascript" src="./pptxjs/divs2slides.js"></script>
+    <!--All Spreadsheet -->
+    <script type="text/javascript" src="sheetjs/jquery.handsontable.full.js"></script>
+    <script type="text/javascript" src="sheetjs/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="sheetjs/jquery.handsontable.full.css">
+    <!--All-->
+    <script src="officejs.js"></script>
+  </head>
+  <body>
+    <div id="main_warper">
+      <div id="header"></div>
+      <div id="left_warper"></div>
+      <div id="center_warper">
+        <div id="resolt_content"></div>
+      </div>
+      <div id="right_warper"></div>
+      <div id="footer"></div>
+    </div>
+    <script type="text/javascript">
+    //var file_url = "Files/Hyundai Getz.docx"; 
+    //var file_url = "Files/bg.jpg";
+    //var file_url = "Files/pdf_demo.pdf";
+    //file_url = "Files/Sample_12.pptx";
+    //var file_url = "Files/sheetjs.xlsx";
+      var file_url = "Files/sheetjs.xlsx";
+      $("#resolt_content").cofficejs({
+        url: file_url
+      });
+    </script>
+  </body>
+</html>
