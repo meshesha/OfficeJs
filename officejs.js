@@ -1,77 +1,115 @@
-﻿
+﻿/**
+ * officejs.js
+ * Ver. : 1.0.1 
+ * last update: 15/11/2017
+ * Author: meshesha , https://github.com/meshesha
+ * LICENSE: MIT
+ * url:https://meshesha.github.io/officeJS
+ */
+
 (function ( $ ) {
    
     /////////////////////////////////////////////////////
-    $.fn.cofficejs = function( options ) {
+    $.fn.officejs = function( options ) {
         var $result = $(this);
         var divId = $result.attr("id");
         var settings = $.extend({
+            // These are the defaults.
             url: "",
-            inputObj:""
+            inputObjId:""
         }, options );
-        //1.get file Type
-        //2.read the file and view the resoult
+        //1.get file memeType
+        //2.load all js file needed to read the file
         var file = settings.url;
+        var inputId = settings.inputObjId;
+        var fileObj = null;
         if(file != ""){
-            var ext = file.split('.').pop();
-            switch (ext.toLowerCase()) {
-                case "pdf":
-                    //handel pdf file (https://mozilla.github.io/pdf.js/) -- V
-                    getPdfContent(file,divId);
-                    break;
-                case "docx":
-                    //handel docx (https://github.com/mwilliamson/mammoth.js) -- V
-                    getDocxContent(file,divId);
-                    break;
-                case "doc":
-                    //handel doc file () -- X
-                    getDocContent(file,divId);
-                    break;
-                case "pptx":
-                    //handel pptx file (https://meshesha.github.io/pptxjs/) -- V
-                    getPptxContent(file,divId);
-                    break;
-                case "ppt":
-                    //handel ppt file () -- X
-                    getPptContent(file,divId);
-                    break;
-                case "xlsx":
-                case "xls":
-                case "xlw":
-                case "xlsb":
-                case "xlsm":
-                case "csv":
-                case "dbf":
-                case "dif":
-                case "slk":
-                case "sylk":
-                case "prn":
-                case "ods":
-                case "fods":
-                    //handel sheet file (https://github.com/sheetjs/js-xlsx) -- V
-                    getSheetContent(file,divId);
-                    break;
-                case "gif":
-                case "jpg":
-                case "jpeg":
-                case "bmp":
-                case "tiff":
-                case "tif":
-                case "png":
-                   //handel imge  -- V
-                   getImgContent(file,divId);
-                    break;
-                default:
-                    unknownMsg(divId);
-                    console.log(file,ext.toLowerCase());
-            }   
+            fileObj = {
+                Obj : file, 
+                ext : file.split('.').pop().toLowerCase()
+            }
+            getContent(fileObj,divId);
+        }
+        if(inputId != ""){
+            //TODO
+            $("#"+inputId).on("change", function(e) {
+                //var inputFileObj = $(this)[0].files[0];
+                var inputFileObj = e.target.files[0];
+                if(inputFileObj !== undefined){
+                    var fName = inputFileObj.name;
+                    fileBlob = URL.createObjectURL(inputFileObj);
+                    fileObj = {
+                        Obj : fileBlob,
+                        ext : fName.split('.').pop().toLowerCase()
+                    }
+                }
+                getContent(fileObj,divId);
+            });
         }
     }
+    function getContent(fObj,divId){
+        var ext = fObj.ext;
+        var file = fObj.file;
+        switch (ext) {
+            case "pdf":
+                //handel pdf file (https://mozilla.github.io/pdf.js/) -- V
+                getPdfContent(fObj,divId);
+                break;
+            case "docx":
+                //handel docx (https://github.com/mwilliamson/mammoth.js) -- V
+                getDocxContent(fObj,divId);
+                break;
+            case "doc":
+                //handel doc file () -- X
+                getDocContent(fObj,divId);
+                break;
+            case "pptx":
+                //handel pptx file (https://meshesha.github.io/pptxjs/) -- V
+                getPptxContent(fObj,divId);
+                break;
+            case "ppt":
+                //handel ppt file () -- X
+                getPptContent(fObj,divId);
+                break;
+            case "xlsx":
+            case "xls":
+            case "xlw":
+            case "xlsb":
+            case "xlsm":
+            case "csv":
+            case "dbf":
+            case "dif":
+            case "slk":
+            case "sylk":
+            case "prn":
+            case "ods":
+            case "fods":
+                //handel sheet file (https://github.com/sheetjs/js-xlsx) -- V
+                getSheetContent(fObj,divId);
+                break;
+            case "gif":
+            case "jpg":
+            case "jpeg":
+            case "bmp":
+            case "tiff":
+            case "tif":
+            case "png":
+            case "svg":
+               //handel imge  -- V
+               getImgContent(fObj,divId);
+                break;
+            default:
+                unknownMsg(divId);
+        }
+        return
+    }
     /////////////////////////////////////////////////PDF//////////////////////////////////////////
-    function getPdfContent(file,divId){
+    function getPdfContent(fObj,divId){
+        $("#"+divId).html("");
         // The workerSrc property shall be specified.
         //PDFJS.workerSrc = './Content/pdfViewer/pdf.worker.js';
-       
+        var file = fObj.Obj;
+
         scale = 1.5;
 
         //var options = options || { scale: 1 };
@@ -96,11 +134,16 @@
             for(var num = 1; num <= pdfDoc.numPages; num++)
                 pdfDoc.getPage(num).then(renderPage);
         }
-        PDFJS.disableWorker = true;
+        //PDFJS.disableWorker = true;
         PDFJS.getDocument(file).then(renderPages);
+
+        return
     }
     /////////////////////////////////////////////////Docx//////////////////////////////////////////
-    function getDocxContent(file,divId){
+    function getDocxContent(fObj,divId){
+        
+        $("#"+divId).html("");
+        var file = fObj.Obj;
         
         JSZipUtils.getBinaryContent(file, function (err, content) {
             mammoth.convertToHtml({ arrayBuffer: content })
@@ -127,33 +170,55 @@
             }
 
         }
+        return
     }
     /////////////////////////////////////////////////doc//////////////////////////////////////////
-    function getDocContent(file,divId){
+    function getDocContent(fObj,divId){
+        
+        $("#"+divId).html("");
+        var file = fObj.Obj;
+
         var ran5 = 10000+Math.round(Math.floor()*90000);
         var subDiv = $('<div/>').attr({ class:'doc_files', id:"doc_file_"+ran5,style:"color:#9d9999;font-size:30pt"});
         $("#"+divId).append(subDiv);
         $("#doc_file_"+ran5).html(".doc file is not supported, convert it to .docx file");
+        return
     }
     /////////////////////////////////////////////////pptx//////////////////////////////////////////
-    function getPptxContent(file,divId){
+    function getPptxContent(fObj,divId){
+        
+        $("#"+divId).html("");
+        
+        //console.log(fObj,divId);
+        var file = fObj.Obj;
         $("#"+divId).pptxToHtml({
             pptxFileUrl: file,
             slideMode: false,
             keyBoardShortCut: false,
             mediaProcess: true
         });
+        return
     }
     /////////////////////////////////////////////////ppt//////////////////////////////////////////
-    function getPptContent(file,divId){
+    function getPptContent(fObj,divId){
+        
+        $("#"+divId).html("");
+        var file = fObj.Obj;
+        
         var ran5 = 10000+Math.round(Math.floor()*90000);
         var subDiv = $('<div/>').attr({ class:'ppt_files', id:"ppt_file_"+ran5,style:"color:#9d9999;font-size:30pt"});
         $("#"+divId).append(subDiv);
         $("#ppt_file_"+ran5).html(".ppt file is not supported, convert it to .pptx file");
         
+        return
     }
     /////////////////////////////////////////////////Sheet//////////////////////////////////////////
-    function getSheetContent(file,divId){
+    function getSheetContent(fObj,divId){
+        
+        $("#"+divId).html("");
+        
+        
+        var file = fObj.Obj;
 
         var $container, $window, availableWidth, availableHeight;
         
@@ -204,20 +269,30 @@
             process_wb(wb);
         };
         req.send();
+        return
     }
     /////////////////////////////////////////////////Images//////////////////////////////////////////
-    function getImgContent(file,divId){
+    function getImgContent(fObj,divId){
+        
+        $("#"+divId).html("");
+        var file = fObj.Obj;
+        
         var img_div = $("#"+divId);
         img_div.html("");
         var myImage = new Image();//Image(100, 200)
         myImage.src = file;
         img_div.append(myImage);
+        return
     }
     /////////////////////////////////////////////////Unknown file//////////////////////////////////////////
     function unknownMsg(divId){
+        
+        $("#"+divId).html("");
+        
         var ran5 = 10000+Math.round(Math.floor()*90000);
         var subDiv = $('<div/>').attr({ class:'unknown_files', id:"unknown_file_"+ran5,style:"color:#9d9999;font-size:30pt"});
         $("#"+divId).append(subDiv);
         $("#unknown_file_"+ran5).html("The file is not supported!");
+        return
     }
 }(jQuery));
